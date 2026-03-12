@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-      shard: [1,2]
+        shard: [1,2]
     steps:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
