@@ -16,6 +16,14 @@ jobs:
       run: npx playwright test --shard=${{ matrix.shard }}/2
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    - name: Check for blob-report directory
+      run: |
+        if [ -d blob-report ]; then
+          echo "blob-report directory exists.";
+          ls -l blob-report;
+        else
+          echo "blob-report directory is missing!";
+        fi
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
