@@ -1,14 +1,15 @@
-name: Playwright Tests
+name: Daily Playwright Tests
 on:
-  push:
-    branches: [ main ]
+  schedule:
+    - cron: '09 45 * * *'  # 9:00 AM IST daily (9:45 AM UTC)
+  workflow_dispatch:     # Manual trigger option
 jobs:
   playwright-test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        spec: ['tests/example.spec.js' , 'tests/checkout.spec.js']
+        spec: ['tests/example.spec.ts', 'tests/checkout.spec.ts']  # Your 2 specs
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -19,39 +20,14 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test --shard=${{ matrix.spec }} --reporter=blob
+      run: npx playwright test ${{ matrix.spec }} --reporter=blob
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: blob-report-${{ matrix.shard }}
+        name: blob-report-${{ matrix.spec }}
         path: blob-report
-        retention-days: 30
-  merge-reports:
-    needs: [playwright-test]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-      - name: Install dependencies
-        run: npm ci
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-         path: all-blob-reports
-         pattern: blob-report-*
-         merge-multiple: true
-      - name: Merge Playwright reports
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      - name: Upload Playwright combined report
-        uses: actions/upload-artifact@v4
-        with:
-          name: html-report
-          path: playwright-report
-          retention-days: 30
+        retention-days: 7
+
+  
