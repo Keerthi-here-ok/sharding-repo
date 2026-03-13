@@ -8,7 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        shard: [1,2]
         spec: ['tests/example.spec.js' , 'tests/checkout.spec.js']
     steps:
     - uses: actions/checkout@v4
