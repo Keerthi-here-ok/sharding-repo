@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         shard: [1,2]
-        spec: ['example.spec.ts', 'checkout.spec.ts']
+        spec: ['tests/example.spec.js' , 'tests/checkout.spec.js']
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -17,12 +17,10 @@ jobs:
         node-version: lts/*
     - name: Install dependencies
       run: npm ci
-      run: npx playwright test ${{ matrix.spec }}
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test --shard=${{ matrix.shard }}/2
-      env:
+      run: npx playwright test --shard=${{ matrix.spec }} --reporter=blob
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
