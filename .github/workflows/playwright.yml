@@ -1,7 +1,7 @@
 name: Daily Playwright Tests
 on:
   schedule:
-    - cron: '09 45 * * *'  # 9:00 AM IST daily (9:45 AM UTC)
+    - cron: '30 3 * * *'  # 9:00 AM IST daily (9:45 AM UTC)
   workflow_dispatch:     # Manual trigger option
 jobs:
   playwright-test:
